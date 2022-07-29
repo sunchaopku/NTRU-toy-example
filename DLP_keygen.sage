@@ -125,7 +125,7 @@ def DLPkeygen(n, q):
 		g_ = zpoly_to_qpoly(n, matrix_to_poly(n, Mg.T))
 		T = f * f_ + g * g_ 
 		t1 = q * f_  / T 
-		t2 = q * g / T
+		t2 = q * g_ / T
 		len2 = 0
 		for i in range(n):
 			len2 = len2 + t1[i]^2 + t2[i]^2
