@@ -79,6 +79,7 @@ def DLPkeygen(alpha):
 	sigma = alpha * sqrt(q/(2 * n))
 	D = DiscreteGaussianDistributionIntegerSampler(sigma, c = 0)
 
+
 	R = PolynomialRing(QQ, 'x')
 	x = R.gen()
 	P = R.quotient(x^n + 1, 'y')
@@ -92,21 +93,33 @@ def DLPkeygen(alpha):
 				g_vec.append(D())
 			f = zpoly_to_qpoly(n, P(f_vec))
 			g = zpoly_to_qpoly(n, P(g_vec))
-			Mf = poly_to_matrix(n, f)
-			Mg = poly_to_matrix(n, g)
+		#	Mf = poly_to_matrix(n, f)
+		#	Mg = poly_to_matrix(n, g)
 			len1 = 0
 			for i in range(n):
 				len1 = len1 + f[i] * f[i] + g[i] * g[i]
 			len1 = sqrt(len1)
-			f_ = zpoly_to_qpoly(n, matrix_to_poly(n, Mf.T))
-			g_ = zpoly_to_qpoly(n, matrix_to_poly(n, Mg.T))
+			f_ad_vec = []
+			g_ad_vec = []
+			for i in range(n):
+				if i == 0:
+					f_ad_vec.append(f_vec[i])
+					g_ad_vec.append(g_vec[i])
+				else:
+					f_ad_vec.append(- f_vec[n - i] )
+					g_ad_vec.append(- g_vec[n - i] )
+
+			f_ = zpoly_to_qpoly(n, P(f_ad_vec))
+			g_ = zpoly_to_qpoly(n, P(g_ad_vec))
 			T = f * f_ + g * g_ 
 			t1 = q * f_  / T 
-			t2 = q * g / T
+			t2 = q * g_ / T
+	#		print("f G - gF", f * t1 + g * t2)
 			len2 = 0
 			for i in range(n):
 				len2 = len2 + t1[i]^2 + t2[i]^2
 			len2 = sqrt(len2)
+		#	print(RR(len1 * len2))
 			if len1 > alpha * sqrt(q) or len2 > alpha * sqrt(q):
 				continue
 			break
